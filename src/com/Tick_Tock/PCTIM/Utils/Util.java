@@ -86,6 +86,10 @@ public class Util
 	public static API api = null;
 
 	public static String NickName="";
+
+	public static FriendListWindow friendwindow=null;
+
+	public static GroupListWindow groupwindow;
 	
 	public static void SendMessage(int chattype, Long uin, String text)
 	{
@@ -102,10 +106,16 @@ public class Util
 	public static void chat(QQMessage qqmessage)
 	{
 		if(qqmessage.Group_uin!=0){
+			if(Util.groupwindow!=null){
+				Util.groupwindow.onmessage(qqmessage);
+			}
 			if(Util.chatwindow!=null&&qqmessage.Group_uin==chatwindow.uin&&chatwindow.chattype==2){
 				Util.chatwindow.onothers(qqmessage);
 			}
 		}else{
+			if(Util.friendwindow!=null){
+				Util.friendwindow.onmessage(qqmessage);
+			}
 			if(Util.chatwindow!=null&&qqmessage.Sender_Uin==chatwindow.uin&&chatwindow.chattype==1){
 				Util.chatwindow.onothers(qqmessage);
 			}
@@ -116,6 +126,9 @@ public class Util
 	public static void self(QQMessage qqmessage)
 	{
 		if(qqmessage.Group_uin!=0){
+			if(Util.groupwindow!=null){
+				Util.groupwindow.onmessage(qqmessage);
+			}
 			if(Util.chatwindow!=null&&qqmessage.Group_uin==chatwindow.uin&&chatwindow.chattype==2){
 				Util.chatwindow.onself(qqmessage);
 			}

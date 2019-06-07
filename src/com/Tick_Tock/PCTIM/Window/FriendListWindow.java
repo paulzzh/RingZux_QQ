@@ -16,15 +16,24 @@ public class FriendListWindow extends BasicWindow
 
 	private Button button;
 
-	
+	private Table<String> table;
+
 	
 	public FriendListWindow(String title,ChatWindow _chatwindow){
 		super(title);
 		this.chatwindow = _chatwindow;
 		this.setHints(Arrays.asList(Window.Hint.FIXED_SIZE,Window.Hint.NO_POST_RENDERING));
 		this.contentPanel = new Panel(new LinearLayout(Direction.VERTICAL)); // can hold multiple sub-components that will be added to a wind
-		this.button=new Button("<---  --->");
-		this.contentPanel.addComponent(this.button);
+		this.table= new Table<String>("QQ","好友名称","最后消息");
+		this.table.setSelectAction(new Runnable() {
+				@Override
+				public void run() {
+					List<String> data = table.getTableModel().getRow(table.getSelectedRow());
+					FriendListWindow.this.chatwindow.onupdate(Long.parseLong(data.get(0)),1,data.get(1));
+					FriendListWindow.this.getTextGUI().setActiveWindow(FriendListWindow.this.chatwindow);
+				}
+			});
+		this.contentPanel.addComponent(this.table);
 		this.setComponent(this.contentPanel);
 		
 	}
@@ -32,14 +41,23 @@ public class FriendListWindow extends BasicWindow
 	
 
 	
-
+public void onmessage(QQMessage message){
+	List<List<String>> rows = this.table.getTableModel().getRows();
+	int index=0;
+	for(List<String> row:rows){
+		if(Long.parseLong(row.get(0))==message.Sender_Uin){
+			this.table.getTableModel().setCell(2,index,message.Message);
+		}
+		index+=1;
+	}
+}
 	
 	
 	public void setfriendlist(final QQUser user){
 		
 		if(user.friend_list!=null){
 			for(Friend_List.Friend members:user.friend_list.members){
-				FriendListWindow.this.contentPanel.addComponent(new friendbutton().setchatwindow(this.chatwindow).setname(members.friend_name).setuin(String.valueOf(members.friend_uin)).setaction().settext());
+				this.table.getTableModel().addRow(""+members.friend_uin,members.friend_name, "");
 			}
 			
 		}else{
@@ -56,48 +74,7 @@ public class FriendListWindow extends BasicWindow
 
 	
 	
-}
 
-
-
-class friendbutton extends Button{
-	public friendbutton(){
-		super("");
-	}
-	
-
-	private String  groupuin;
-	private String groupname;
-	private ChatWindow chatwindow;
-
-	public Component settext()
-	{
-		this.setLabel(" "+this.groupname+"   暂无");
-		return this;
-	}
-	public friendbutton setuin(String _groupuin){
-		this.groupuin=_groupuin;
-		return this;
-	}
-	public friendbutton setname(String _name){
-		this.groupname=_name;
-		return this;
-
-	}
-	public friendbutton setchatwindow(ChatWindow _chatwindow){
-		this.chatwindow=_chatwindow;
-		return this;
-
-	}
-	public friendbutton setaction(){
-
-		this.addListener(new Listener(){
-				@Override public void onTriggered(Button button){
-					chatwindow.onupdate(Long.parseLong(groupuin),1,groupname);
-				}
-			});
-		return this;
-	}
 
 
 

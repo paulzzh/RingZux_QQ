@@ -26,13 +26,9 @@ public class ChatWindow extends BasicWindow
 	public ChatWindow(String title){
 		super(title);
 		this.setHints(Arrays.asList(Window.Hint.FIXED_SIZE,Window.Hint.NO_POST_RENDERING));
-
-		this.button=new Button("<---  --->");
-
 		this.contentPanel = new Panel(new LinearLayout(Direction.VERTICAL)); // can hold multiple sub-components that will be added to a windo
-		this.contentPanel.addComponent(this.button);
-		this.textbox = new TextBox();
 		this.label=new Label("");
+		this.textbox = new TextBox();
 		this.button=new Button(" 发送",new Runnable(){
 			public void run(){
 				if(!ChatWindow.this.inputmessagebox.getText().equals("")){

@@ -13,6 +13,7 @@ import com.googlecode.lanterna.gui2.dialogs.*;
 import com.googlecode.lanterna.input.*;
 import java.util.concurrent.atomic.*;
 import com.googlecode.lanterna.graphics.*;
+import com.Tick_Tock.PCTIM.Theme.*;
 
 public class MainApp extends Thread
 {
@@ -56,6 +57,11 @@ public class MainApp extends Thread
 			this.setallwindowsize();
 			this.addallwindowtoui();
 			this.setallwindowposition();
+			
+			Util.chatwindow=chatwindow;
+			Util.friendwindow=friendlistwindow;
+			Util.groupwindow=grouplistwindow;
+			textGUI.setActiveWindow(friendlistwindow);
 			this.textGUI.setTheme(new DelegatingTheme(this.textGUI.getTheme()) {
 					@Override
 					public ThemeDefinition getDefinition(Class<?> clazz) {
@@ -63,13 +69,8 @@ public class MainApp extends Thread
 						return new MainTheme(themeDefinition);
 					}
 				});
-			Util.chatwindow=chatwindow;
-			textGUI.setActiveWindow(friendlistwindow);
-
 			new qqinfo().setuser(this.user).setfriendwindow(friendlistwindow).setgroupwindow(grouplistwindow).start();
-
 			Util.output=logoutputwindow;
-			
 			textGUI.waitForWindowToClose(friendlistwindow);
 
 

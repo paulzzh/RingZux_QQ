@@ -18,15 +18,15 @@ public class OutPutWindow extends BasicWindow
 
 		this.contentPanel = new Panel(new GridLayout(2)); // can hold multiple sub-components that will be added to a window
 		this.textbox = new TextBox();
-
+		
 		this.contentPanel.addComponent(this.textbox);
 		com.googlecode.lanterna.gui2.TextBox.TextBoxRenderer tbr = this.textbox.getRenderer();
 		com.googlecode.lanterna.gui2.TextBox.DefaultTextBoxRenderer dtbr = (TextBox.DefaultTextBoxRenderer) tbr;
 	    dtbr.setHideScrollBars(true);
 		
-
+	
 		this.setComponent(contentPanel);
-
+		
 
 	}
 
