@@ -5,7 +5,12 @@ import com.Tick_Tock.PCTIM.*;
 import com.Tick_Tock.PCTIM.Message.*;
 import com.Tick_Tock.PCTIM.Utils.*;
 
-public class RobotApi implements API{
+public class RobotApi implements API
+{
+
+	
+	
+
 
 private Udpsocket socket = null;
 	private QQUser user = null;
@@ -28,7 +33,18 @@ private Udpsocket socket = null;
 
 	}
 
+	@Override
+	public Group_List getgrouplist()
+	{
+		
+		return this.user.group_list;
+	}
 
+	@Override
+	public Friend_List getfriendlist()
+	{
+		return this.user.friend_list;
+	}
 
-
+	
 }

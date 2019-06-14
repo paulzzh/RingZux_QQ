@@ -8,14 +8,13 @@ import com.googlecode.lanterna.input.*;
 import com.Tick_Tock.PCTIM.Message.*;
 import com.Tick_Tock.PCTIM.Utils.*;
 
-public class ChatWindow extends BasicWindow
+public class ChatWindow extends BaseWindow
 {
 
 	private Panel contentPanel;
 	private TextBox textbox;
 	private Label label;
-	private Button button;
-
+	
 	public int chattype=0;
 
 	public Long uin=0l;
@@ -26,34 +25,54 @@ public class ChatWindow extends BasicWindow
 	public ChatWindow(String title){
 		super(title);
 		this.setHints(Arrays.asList(Window.Hint.FIXED_SIZE,Window.Hint.NO_POST_RENDERING));
-		this.contentPanel = new Panel(new LinearLayout(Direction.VERTICAL)); // can hold multiple sub-components that will be added to a windo
-		this.label=new Label("");
-		this.textbox = new TextBox();
-		this.button=new Button(" 发送",new Runnable(){
-			public void run(){
-				if(!ChatWindow.this.inputmessagebox.getText().equals("")){
-		        Util.SendMessage(ChatWindow.this.chattype,ChatWindow.this.uin,ChatWindow.this.inputmessagebox.getText());
-				ChatWindow.this.inputmessagebox.setText("");
-				ChatWindow.this.handleInput(new KeyStroke(KeyType.ArrowUp));
-				ChatWindow.this.handleInput(new KeyStroke(KeyType.ArrowUp));
-				}
-			}
-		});
+		this.contentPanel  = new Panel(new GridLayout(2)); // can hold multiple sub-components that will be added to a windo
+		this.label=new Label("未选定聊天目标");
+		this.textbox = new TextBox().setEnabled(false);
 		this.inputmessagebox = new TextBox();
 		com.googlecode.lanterna.gui2.TextBox.TextBoxRenderer tbr = this.textbox.getRenderer();
 		com.googlecode.lanterna.gui2.TextBox.DefaultTextBoxRenderer dtbr = (TextBox.DefaultTextBoxRenderer) tbr;
 	    dtbr.setHideScrollBars(true);
-		this.contentPanel.addComponent(this.label);
-		this.contentPanel.addComponent(this.inputmessagebox);
-		this.contentPanel.addComponent(this.button);
-		this.contentPanel.addComponent(this.textbox.setReadOnly(true));
-		
+		this.contentPanel.addComponent(this.label.setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.CENTER,GridLayout.Alignment.BEGINNING,true,false,2,1)));
+		this.contentPanel.addComponent(this.inputmessagebox.setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.CENTER,GridLayout.Alignment.BEGINNING,true,false,2,1)));
+		contentPanel.addComponent(
+			new Separator(Direction.HORIZONTAL)
+			.setLayoutData(
+				GridLayout.createHorizontallyFilledLayoutData(2)));
+		this.contentPanel.addComponent(this.textbox.setReadOnly(true),LinearLayout.createLayoutData(LinearLayout.Alignment.Beginning));
 		this.setComponent(this.contentPanel);
+	
+	}
+	
+	public static ChatWindow getconvertobj(Window p1)
+	{
+		return (ChatWindow)p1;
+	}
+	
+	public TextBox getinputbox()
+	{
+		
+		
+		return this.inputmessagebox;
 	}
 
 	
+	@Override public void setsize(TerminalSize size){
+		this.setSize(new TerminalSize(size.getColumns()-2,size.getRows()/10*9-2));
+		
+	}
+	
+	
+	@Override public void setposition(TerminalSize size){
+		this.setPosition(new TerminalPosition(0,size.getRows()/10));
+	}
+	
 
-
+	public void settextboxsize(){
+		this.textbox.setPreferredSize(new TerminalSize(this.getSize().getColumns(),this.getSize().getRows()-5));
+		
+	}
+	
+	
 
 	public void onupdate(Long _uin,int _chattype,String targetname){
 		this.label.setText(targetname);
@@ -64,13 +83,13 @@ public class ChatWindow extends BasicWindow
 
 	public void onself(QQMessage message)
 	{
+		
 		if(this.getacturesizeoftext(message.Message+message.SendName)>this.textbox.getPreferredSize().getColumns()){
 			this.cutmessage2(message);
-			this.handleInput(new KeyStroke(KeyType.ArrowDown));
 			return;
 		}
-		this.textbox.addLine(stringreader.createblank(this.textbox.getPreferredSize().getColumns()-(this.getacturesizeoftext(message.Message+" :"+message.SendName)))+message.Message+" :"+message.SendName);
-		this.handleInput(new KeyStroke(KeyType.ArrowDown));
+		this.print(stringreader.createblank(this.textbox.getPreferredSize().getColumns()-(this.getacturesizeoftext(message.Message+" :"+message.SendName)))+message.Message+" :"+message.SendName);
+		
 	}
 
 	private void cutmessage2(QQMessage message)
@@ -80,9 +99,9 @@ public class ChatWindow extends BasicWindow
 		int headersize = getacturesizeoftext(head);
 		int messagesize = textboxwidth-headersize-this.textbox.getPreferredSize().getColumns()/5;
 		stringreader reader = new stringreader(message.Message);
-		this.textbox.addLine(reader.createblank(this.textbox.getPreferredSize().getColumns()/5)+reader.readstring(messagesize)+head);
+		this.print(reader.createblank(this.textbox.getPreferredSize().getColumns()/5)+reader.readstring(messagesize)+head);
 		while(!reader.isover()){
-			this.textbox.addLine(reader.createblank(this.textbox.getPreferredSize().getColumns()/5)+reader.readstring(messagesize));
+			this.print(reader.createblank(this.textbox.getPreferredSize().getColumns()/5)+reader.readstring(messagesize));
 		}
 	}
 
@@ -92,11 +111,16 @@ public class ChatWindow extends BasicWindow
 		}
 		if(this.getacturesizeoftext(message.Message+message.SendName)>this.textbox.getPreferredSize().getColumns()){
 			this.cutmessage(message);
-			this.handleInput(new KeyStroke(KeyType.ArrowDown));
 			return;
 		}
-		this.textbox.addLine(message.SendName+": "+message.Message);
-		this.handleInput(new KeyStroke(KeyType.ArrowDown));
+		this.print(message.SendName+": "+message.Message);
+	
+	}
+
+	private void print(String message)
+	{
+		this.textbox.addLine(message);
+			this.textbox.handleInput(new KeyStroke(KeyType.ArrowDown));
 	}
 	
 	private void cutmessage(QQMessage message)
@@ -106,9 +130,9 @@ public class ChatWindow extends BasicWindow
 		int headersize = getacturesizeoftext(head);
 		int messagesize = textboxwidth-headersize-this.textbox.getPreferredSize().getColumns()/5;
 		stringreader reader = new stringreader(message.Message);
-		this.textbox.addLine(head+reader.readstring(messagesize));
+		this.print(head+reader.readstring(messagesize));
 		while(!reader.isover()){
-			this.textbox.addLine(reader.createblank(headersize)+reader.readstring(messagesize));
+			this.print(reader.createblank(headersize)+reader.readstring(messagesize));
 		}
 	}
 
@@ -128,10 +152,7 @@ public class ChatWindow extends BasicWindow
 	}
 	
 	
-	public void setchatboxsize(){
-	    this.textbox.setPreferredSize(new TerminalSize(this.getSize().getColumns(),this.getSize().getRows()-5));
-	
-	}
+
 }
 
 class stringreader

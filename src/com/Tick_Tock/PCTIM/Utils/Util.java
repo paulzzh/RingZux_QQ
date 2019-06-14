@@ -8,15 +8,14 @@ import java.net.*;
 import com.Tick_Tock.PCTIM.*;
 import java.util.zip.*;
 import com.Tick_Tock.PCTIM.Message.*;
-import java.awt.image.*;
 import javax.imageio.ImageIO;
 import com.Tick_Tock.PCTIM.sdk.*;
 import java.text.*;
-import java.awt.Graphics;
 import javax.net.ssl.*;
 import org.json.*;
 import com.Tick_Tock.PCTIM.Window.*;
 import com.googlecode.lanterna.gui2.*;
+import java.awt.image.*;
 
 
 
@@ -87,9 +86,36 @@ public class Util
 
 	public static String NickName="";
 
-	public static FriendListWindow friendwindow=null;
+	public static ChatListWindow chatlistwindow;
 
-	public static GroupListWindow groupwindow;
+	
+	public static String getFriendnamebyuin(long Uin)
+	{
+		try{
+		for (Friend_List.Friend friend:Util.api.getfriendlist().members){
+			if(friend.friend_uin==Uin){
+				return friend.friend_name;
+			}
+		}
+		}catch(Exception e){
+			
+		}
+		return "未获取到好友名";
+	}
+
+	public static String getGroupnamebyuin(long group_uin)
+	{
+		try{
+		for (Group_List.Group group:Util.api.getgrouplist().getall_group()){
+			if(group.group_uin==group_uin){
+				return group.group_name;
+			}
+		}
+		}catch(Exception e){
+		}
+		return "未获取到群名";
+	}
+
 	
 	public static void SendMessage(int chattype, Long uin, String text)
 	{
@@ -105,17 +131,16 @@ public class Util
 
 	public static void chat(QQMessage qqmessage)
 	{
+		if(Util.chatlistwindow!=null){
+			Util.chatlistwindow.onmessage(qqmessage);
+		}
 		if(qqmessage.Group_uin!=0){
-			if(Util.groupwindow!=null){
-				Util.groupwindow.onmessage(qqmessage);
-			}
+			
 			if(Util.chatwindow!=null&&qqmessage.Group_uin==chatwindow.uin&&chatwindow.chattype==2){
 				Util.chatwindow.onothers(qqmessage);
 			}
 		}else{
-			if(Util.friendwindow!=null){
-				Util.friendwindow.onmessage(qqmessage);
-			}
+			
 			if(Util.chatwindow!=null&&qqmessage.Sender_Uin==chatwindow.uin&&chatwindow.chattype==1){
 				Util.chatwindow.onothers(qqmessage);
 			}
@@ -125,10 +150,10 @@ public class Util
 	
 	public static void self(QQMessage qqmessage)
 	{
+		if(Util.chatlistwindow!=null){
+			Util.chatlistwindow.onmessage(qqmessage);
+		}
 		if(qqmessage.Group_uin!=0){
-			if(Util.groupwindow!=null){
-				Util.groupwindow.onmessage(qqmessage);
-			}
 			if(Util.chatwindow!=null&&qqmessage.Group_uin==chatwindow.uin&&chatwindow.chattype==2){
 				Util.chatwindow.onself(qqmessage);
 			}
@@ -585,7 +610,7 @@ public class Util
 
 	}
 
-	public static BufferedImage  zoomOutImage(BufferedImage  originalImage, float times)
+	/*public static BufferedImage  zoomOutImage(BufferedImage  originalImage, float times)
 	{
 
 		int width = new Float(originalImage.getWidth() / times).intValue();
@@ -614,6 +639,7 @@ public class Util
 		return newImage;
 
 	}
+	*/
 
 
 	public static String read_property(String key)

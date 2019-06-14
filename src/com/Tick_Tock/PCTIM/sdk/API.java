@@ -6,4 +6,8 @@ public interface API {
 	public void SendGroupMessage(MessageFactory factory);
 	
 	public void SendFriendMessage(MessageFactory factory);
+	
+	public Group_List getgrouplist();
+	
+	public Friend_List getfriendlist();
 }

@@ -6,8 +6,9 @@ import com.googlecode.lanterna.gui2.table.*;
 import com.Tick_Tock.PCTIM.sdk.*;
 import com.Tick_Tock.PCTIM.Utils.*;
 import com.googlecode.lanterna.gui2.dialogs.*;
+import com.googlecode.lanterna.*;
 
-public class FriendListWindow extends BasicWindow
+public class FriendListWindow extends BaseWindow
 {
 
 	private Panel contentPanel;
@@ -18,19 +19,22 @@ public class FriendListWindow extends BasicWindow
 
 	private Table<String> table;
 
+	private MainApp app;
+
 	
-	public FriendListWindow(String title,ChatWindow _chatwindow){
+	public FriendListWindow(String title,ChatWindow _chatwindow,MainApp _app){
 		super(title);
 		this.chatwindow = _chatwindow;
+		this.app=_app;
 		this.setHints(Arrays.asList(Window.Hint.FIXED_SIZE,Window.Hint.NO_POST_RENDERING));
 		this.contentPanel = new Panel(new LinearLayout(Direction.VERTICAL)); // can hold multiple sub-components that will be added to a wind
-		this.table= new Table<String>("QQ","好友名称","最后消息");
+		this.table= new Table<String>("QQ","好友名称");
 		this.table.setSelectAction(new Runnable() {
 				@Override
 				public void run() {
 					List<String> data = table.getTableModel().getRow(table.getSelectedRow());
 					FriendListWindow.this.chatwindow.onupdate(Long.parseLong(data.get(0)),1,data.get(1));
-					FriendListWindow.this.getTextGUI().setActiveWindow(FriendListWindow.this.chatwindow);
+					FriendListWindow.this.app.setvisiblewindow(FriendListWindow.this.chatwindow);
 				}
 			});
 		this.contentPanel.addComponent(this.table);
@@ -38,26 +42,39 @@ public class FriendListWindow extends BasicWindow
 		
 	}
 
-	
+	public Table getlisttable()
+	{
+		return this.table;
+	}
 
 	
-public void onmessage(QQMessage message){
-	List<List<String>> rows = this.table.getTableModel().getRows();
-	int index=0;
-	for(List<String> row:rows){
-		if(Long.parseLong(row.get(0))==message.Sender_Uin){
-			this.table.getTableModel().setCell(2,index,message.Message);
-		}
-		index+=1;
+	@Override public void setsize(TerminalSize size){
+		this.setSize(new TerminalSize(size.getColumns()/2,size.getRows()/10*9));
 	}
-}
+
+	@Override public void setposition(TerminalSize size){
+		this.setPosition(new TerminalPosition(0,size.getRows()/10));
+
+	}
+	
+	public static FriendListWindow getconvertobj(Window p1)
+	{
+		return (FriendListWindow)p1;
+	}
+	
+	
+	public void settablesize(TerminalSize size){
+		this.table.setPreferredSize(new TerminalSize(size.getColumns()/2,size.getRows()));
+	}
+	
+
 	
 	
 	public void setfriendlist(final QQUser user){
 		
 		if(user.friend_list!=null){
 			for(Friend_List.Friend members:user.friend_list.members){
-				this.table.getTableModel().addRow(""+members.friend_uin,members.friend_name, "");
+				this.table.getTableModel().addRow(""+members.friend_uin,members.friend_name);
 			}
 			
 		}else{

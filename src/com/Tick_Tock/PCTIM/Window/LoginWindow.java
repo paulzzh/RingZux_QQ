@@ -3,7 +3,7 @@ import com.googlecode.lanterna.gui2.*;
 import java.util.*;
 import com.googlecode.lanterna.gui2.dialogs.*;
 
-public class LoginWindow extends BasicWindow
+public class LoginWindow extends BaseWindow
 {
 
 	private Panel contentPanel;
