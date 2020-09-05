@@ -1,31 +1,50 @@
+9.12更新内容:<br>
+1:扫码登陆<br>
+终端打印二维码，扫不出来与我无瓜。自己想办法。
 
+9.11更新内容:<br>
+1:解析表情<br>
+2:修复可能的错误
 
-![image](https://github.com/Saint-Theana/RingZux_QQ/raw/master/screenshot/1.png)
-![image](https://github.com/Saint-Theana/RingZux_QQ/raw/master/screenshot/2.png)
-![image](https://github.com/Saint-Theana/RingZux_QQ/raw/master/screenshot/3.png)
-![image](https://github.com/Saint-Theana/RingZux_QQ/raw/master/screenshot/4.png)
+9.11更新内容:<br>
+1:ecdh密匙协商<br>
+2:删除没必要的东西<br>
+3:彻底删除几个低效率方法<br>
+4:重命名变量名<br>
+5:现在0836可能不反回，概率挺高的，可能是ecdh的原因<br>
+6:bouncycastle需要安装在jre里，自行百度。
 
+9.8更新内容:<br>
+1:makefile自动编译运行<br>
+2:将udp换成tcp通道(不喜欢udp)<br>
+3:用netty重构整个框架<br>
+4:用ByteBuf重构大部分Byte构建(还有部分改不动了)<br>
+5:用ByteBuf重构大部分Byte读取(还有部分改不动了)<br>
+6:删除所有有关TUI的东西(那个TUIOO就是写来玩玩的，不想再写了)<br>
+7:删除大量无用代码<br>
+8:替换部分低效率方法<br>
+重构后的结构基本上与我那套安卓OOxy类似。
 
+运行方法:<br>
+make run
 
-
+错误方式执行./Makefile导致根目录被删本人不负责
 
 声明:
-
-本项目由纯java代码开发，核心代码为pcqq协议，翻译自网络上其他开源的pcqq协议代码，使用本项目代码产生的任何后果与本人无关。
+本项目由纯java代码开发，核心代码为叩叩协议，翻译自网络上其他开源的代码，使用本项目代码产生的任何后果与本人无关。
 
 功能:
 
   静态代码类:
 
-    登录qq，获取群列表/好友列表，发送接受群/好友消息，已插件化，可用java/lua插件
+    登录叩叩，获取群列表/好友列表，发送接受群/好友消息，已插件化，可用java插件
   动态代码类:
 
     可用tui实现简单聊天
 
 依赖:
 
-    json,luaj,lanterna
+    json
 
 
-说明:本项目qq协议部分不会再更新(pc协议难分析)。如果想要其他功能(发送图片/语音消息)联系我。
-
+说明:本项目或许不会再更新。。
